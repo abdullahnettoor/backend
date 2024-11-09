@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# TicTacToe CLI Backend
+
+Backend and landing page for a developer-friendly TicTacToe game that runs in your terminal. Take a break from coding and enjoy a quick game without leaving your development environment! ⌨️
+
+## Features
+
+- Real-time multiplayer using WebSocket
+- Rate limiting for connection security
+- Username validation
+- Game session management
+- Automatic opponent matching
+- Timeout handling for inactive games
+- Development and production configurations
+- Error logging with Winston
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/abdullahnettoor/tictactoe-backend.git
+cd tictactoe-backend
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+3. Run the development server:
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the landing page.
 
-## Learn More
+## Environment Variables
 
-To learn more about Next.js, take a look at the following resources:
+- `NODE_ENV`: Set to 'production' for production environment
+- `PORT`: Server port (default: 3000)
+- `HOST`: Server hostname (default: localhost)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## API Documentation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### WebSocket Endpoints
 
-## Deploy on Vercel
+- `/ws`: Main WebSocket endpoint for game communication
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Message Types
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `register`: Register new user
+- `findGame`: Find opponent for game
+- `move`: Make a move in the game
+- `gameStart`: Game start notification
+- `searching`: Searching for opponent
+- `userCount`: Online players count update
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Author
+
+**Abdullah Nettoor**
+- GitHub: [@abdullahnettoor](https://github.com/abdullahnettoor)
+- Email: abdullahnettoor@gmail.com
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+

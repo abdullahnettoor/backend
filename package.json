@@ -1,7 +1,29 @@
 {
-  "name": "backend",
+  "name": "tictactoe_cli_backend",
   "version": "0.1.0",
+  "description": "Backend and landing page for developer-friendly TicTacToe game that runs in your terminal. Take a break from coding and enjoy a quick game without leaving your development environment! ⌨️",
   "private": true,
+  "author": {
+    "name": "Abdullah Nettoor",
+    "email": "abdullahnettoor@gmail.com",
+    "url": "https://github.com/abdullahnettoor"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abdullahnettoor/tictactoe-backend"
+  },
+  "bugs": {
+    "url": "https://github.com/abdullahnettoor/tictactoe-backend/issues"
+  },
+  "keywords": [
+    "tictactoe",
+    "cli",
+    "game",
+    "multiplayer",
+    "websocket",
+    "terminal"
+  ],
   "scripts": {
     "dev": "node server.js",
     "build": "next build",
