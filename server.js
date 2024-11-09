@@ -31,11 +31,6 @@ const SEARCH_TIMEOUT = process.env.NODE_ENV === 'production' ? PROD_TIMEOUT : DE
 app.prepare().then(() => {
   const server = createServer(async (req, res) => {
     try {
-      // Don't end the response for WebSocket upgrade requests
-      if (req.headers.upgrade && req.headers.upgrade.toLowerCase() === 'websocket') {
-        return;
-      }
-
       const parsedUrl = parse(req.url, true);
       await handle(req, res, parsedUrl);
     } catch (err) {
@@ -45,9 +40,7 @@ app.prepare().then(() => {
     }
   });
 
-  const wss = new WebSocketServer({
-    noServer: true
-  });
+  const wss = new WebSocketServer({ noServer: true });
 
   wss.on('connection', async (ws, req) => {
     try {

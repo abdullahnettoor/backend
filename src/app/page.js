@@ -23,12 +23,23 @@ export default function Landing() {
         const wsUrl = `${protocol}//${host}/ws`;
 
         console.log('Connecting to WebSocket:', wsUrl);
-        wsRef.current = new WebSocket(wsUrl);
 
-        wsRef.current.onopen = () => {
-          setWsStatus('connected');
-          console.log('WebSocket connected');
+        const connect = () => {
+          wsRef.current = new WebSocket(wsUrl);
+
+          wsRef.current.onopen = () => {
+            setWsStatus('connected');
+            console.log('WebSocket connected');
+          };
+
+          wsRef.current.onclose = () => {
+            console.log('WebSocket closed');
+            setWsStatus('disconnected');
+            setTimeout(connect, 5000);
+          };
         };
+
+        connect();
 
         wsRef.current.onmessage = (event) => {
           try {
@@ -48,12 +59,6 @@ export default function Landing() {
         wsRef.current.onerror = (error) => {
           console.error('WebSocket error:', error);
           setWsStatus('error');
-        };
-
-        wsRef.current.onclose = () => {
-          console.log('WebSocket closed');
-          setWsStatus('disconnected');
-          setTimeout(connectWebSocket, 5000);
         };
       } catch (err) {
         console.error('WebSocket connection error:', err);
