@@ -2,22 +2,21 @@
   "version": 2,
   "builds": [
     {
-      "src": "server.js",
-      "use": "@vercel/node"
+      "src": "package.json",
+      "use": "@vercel/next",
+      "config": {
+        "buildCommand": "npm run build"
+      }
     }
   ],
   "routes": [
     {
       "src": "/ws",
-      "dest": "server.js",
-      "check": true
+      "dest": "server.js"
     },
     {
       "src": "/(.*)",
-      "dest": "server.js"
+      "dest": "/$1"
     }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  }
+  ]
 }

@@ -1,11 +1,13 @@
 const { createServer } = require('http');
 const { parse } = require('url');
 const next = require('next');
-const { WebSocketServer } = require('ws');
+const WebSocket = require('ws');
 const { v4: uuidv4 } = require('uuid');
 const { RateLimiterMemory } = require('rate-limiter-flexible');
 const logger = require('./utils/logger');
 const { ValidationError, GameStateError } = require('./utils/errors');
+
+const WebSocketServer = WebSocket.Server;
 
 const dev = process.env.NODE_ENV !== 'production';
 const hostname = process.env.VERCEL_URL || 'localhost';

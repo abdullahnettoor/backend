@@ -26,8 +26,9 @@
   ],
   "scripts": {
     "dev": "node server.js",
-    "build": "next build",
+    "build": "next build && npm run copy-server",
     "start": "NODE_ENV=production node server.js",
+    "copy-server": "cp server.js .next/",
     "lint": "next lint"
   },
   "dependencies": {
