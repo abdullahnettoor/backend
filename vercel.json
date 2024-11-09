@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/ws",
+      "dest": "server.js",
+      "headers": {
+        "Upgrade": "websocket"
+      }
+    }
+  ]
+} 

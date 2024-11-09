@@ -18,9 +18,7 @@ export default function Landing() {
         }
 
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const host = process.env.NODE_ENV === 'production'
-          ? 'tictactoedev.vercel.app'
-          : window.location.host;
+        const host = window.location.host;
         const wsUrl = `${protocol}//${host}/ws`;
 
         wsRef.current = new WebSocket(wsUrl);

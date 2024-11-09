@@ -47,8 +47,7 @@ app.prepare().then(() => {
 
   const wss = new WebSocketServer({
     server,
-    path: '/ws',
-    handleProtocols: () => 'websocket'
+    path: '/ws'
   });
 
   wss.on('connection', async (ws, req) => {
