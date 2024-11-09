@@ -19,47 +19,35 @@ export default function Landing() {
 
         const isProduction = process.env.NODE_ENV === 'production';
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const host = isProduction ? process.env.VERCEL_URL : 'localhost:3000';
+        const host = isProduction
+          ? window.location.host
+          : 'localhost:3000';
         const wsUrl = `${protocol}//${host}/ws`;
 
         console.log('Connecting to WebSocket:', wsUrl);
 
         const connect = () => {
-          wsRef.current = new WebSocket(wsUrl);
+          const ws = new WebSocket(wsUrl);
+          wsRef.current = ws;
 
-          wsRef.current.onopen = () => {
+          ws.onopen = () => {
             setWsStatus('connected');
             console.log('WebSocket connected');
           };
 
-          wsRef.current.onclose = () => {
-            console.log('WebSocket closed');
+          ws.onclose = (event) => {
+            console.log('WebSocket closed:', event.code, event.reason);
             setWsStatus('disconnected');
             setTimeout(connect, 5000);
+          };
+
+          ws.onerror = (error) => {
+            console.error('WebSocket error:', error);
+            setWsStatus('error');
           };
         };
 
         connect();
-
-        wsRef.current.onmessage = (event) => {
-          try {
-            const data = JSON.parse(event.data);
-            console.log('Received:', data);
-
-            if (data.type === 'userCount') {
-              setPlayerCount(data.count);
-            } else if (data.type === 'error') {
-              console.error('Server error:', data.message);
-            }
-          } catch (err) {
-            console.error('Error parsing message:', err);
-          }
-        };
-
-        wsRef.current.onerror = (error) => {
-          console.error('WebSocket error:', error);
-          setWsStatus('error');
-        };
       } catch (err) {
         console.error('WebSocket connection error:', err);
         setWsStatus('error');

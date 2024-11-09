@@ -10,14 +10,14 @@
     {
       "src": "/ws",
       "dest": "server.js",
-      "headers": {
-        "Upgrade": "websocket",
-        "Connection": "upgrade"
-      }
+      "check": true
     },
     {
       "src": "/(.*)",
       "dest": "server.js"
     }
-  ]
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
 }
