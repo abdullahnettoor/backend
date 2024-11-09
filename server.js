@@ -24,9 +24,18 @@ const rateLimiter = new RateLimiterMemory({
   duration: 60
 });
 
+const DEV_TIMEOUT = 60000; // 1 minute for development
+const PROD_TIMEOUT = 30000; // 30 seconds for production
+const SEARCH_TIMEOUT = process.env.NODE_ENV === 'production' ? PROD_TIMEOUT : DEV_TIMEOUT;
+
 app.prepare().then(() => {
   const server = createServer(async (req, res) => {
     try {
+      // Don't end the response for WebSocket upgrade requests
+      if (req.headers.upgrade && req.headers.upgrade.toLowerCase() === 'websocket') {
+        return;
+      }
+
       const parsedUrl = parse(req.url, true);
       await handle(req, res, parsedUrl);
     } catch (err) {
@@ -36,7 +45,11 @@ app.prepare().then(() => {
     }
   });
 
-  const wss = new WebSocketServer({ server });
+  const wss = new WebSocketServer({
+    server,
+    path: '/ws',
+    handleProtocols: () => 'websocket'
+  });
 
   wss.on('connection', async (ws, req) => {
     try {
@@ -45,6 +58,11 @@ app.prepare().then(() => {
 
       const userId = uuidv4();
       logger.info('Client connected', { userId, ip });
+
+      ws.on('error', (error) => {
+        logger.error('WebSocket error:', error);
+        ws.close();
+      });
 
       ws.on('message', (data) => {
         try {
@@ -57,20 +75,13 @@ app.prepare().then(() => {
 
       ws.on('close', () => handleDisconnect(userId));
 
-      // Send initial connection success and start finding opponent
       ws.send(JSON.stringify({
         type: 'connected',
         userId: userId
       }));
 
-      // Automatically start finding opponent after connection
-      setTimeout(() => {
-        findGame(userId);
-      }, 1000); // Give a second for registration to complete
     } catch (err) {
-      if (err instanceof Error) {
-        logger.error('Connection error', { error: err.message });
-      }
+      logger.error('Connection error', { error: err.message });
       ws.close();
     }
   });
@@ -87,6 +98,7 @@ function handleMessage(ws, userId, message) {
         if (!message.username) {
           throw new Error('Username is required');
         }
+        validateUsername(message.username);
         registerUser(ws, userId, message.username);
         findGame(userId);
         break;
@@ -112,8 +124,11 @@ function handleMessage(ws, userId, message) {
 }
 
 function registerUser(ws, userId, username) {
-  users.set(userId, { ws, username, status: 'online' });
-  broadcastUserCount();
+  // Only register if username doesn't start with 'Guest_'
+  if (!username.startsWith('Guest_')) {
+    users.set(userId, { ws, username, status: 'online' });
+    broadcastUserCount();
+  }
 }
 
 function handleDisconnect(userId) {
@@ -200,13 +215,17 @@ function findGame(userId) {
       if (waitingPlayers.has(userId)) {
         user.ws.send(JSON.stringify({
           type: 'searchTimeout',
-          message: 'No opponents available at the moment. Please try again later.'
+          message: `No opponents available after ${SEARCH_TIMEOUT/1000} seconds. Please try again later.`
         }));
         waitingPlayers.delete(userId);
-        logger.info('Player removed from waiting list (timeout)', { userId });
+        logger.info('Player removed from waiting list (timeout)', {
+          userId,
+          waitTime: SEARCH_TIMEOUT/1000,
+          environment: process.env.NODE_ENV
+        });
         logWaitingPlayers(); // Log final state
       }
-    }, 10000);
+    }, SEARCH_TIMEOUT);
   }
 }
 
