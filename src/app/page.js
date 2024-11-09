@@ -17,10 +17,12 @@ export default function Landing() {
           wsRef.current.close();
         }
 
+        const isProduction = process.env.NODE_ENV === 'production';
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const host = window.location.host;
+        const host = isProduction ? process.env.VERCEL_URL : 'localhost:3000';
         const wsUrl = `${protocol}//${host}/ws`;
 
+        console.log('Connecting to WebSocket:', wsUrl);
         wsRef.current = new WebSocket(wsUrl);
 
         wsRef.current.onopen = () => {

@@ -46,8 +46,7 @@ app.prepare().then(() => {
   });
 
   const wss = new WebSocketServer({
-    server,
-    path: '/ws'
+    noServer: true
   });
 
   wss.on('connection', async (ws, req) => {
@@ -82,6 +81,14 @@ app.prepare().then(() => {
     } catch (err) {
       logger.error('Connection error', { error: err.message });
       ws.close();
+    }
+  });
+
+  server.on('upgrade', (request, socket, head) => {
+    if (request.url === '/ws') {
+      wss.handleUpgrade(request, socket, head, (ws) => {
+        wss.emit('connection', ws, request);
+      });
     }
   });
 
