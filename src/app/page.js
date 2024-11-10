@@ -27,32 +27,45 @@ export default function Landing() {
 
         console.log('Connecting to WebSocket:', wsUrl);
 
-        const connect = () => {
-          const ws = new WebSocket(wsUrl);
-          wsRef.current = ws;
+        const ws = new WebSocket(wsUrl);
+        wsRef.current = ws;
 
-          ws.onopen = () => {
-            setWsStatus('connected');
-            console.log('WebSocket connected');
-          };
-
-          ws.onclose = (event) => {
-            console.log('WebSocket closed:', event.code, event.reason);
-            setWsStatus('disconnected');
-            setTimeout(connect, 5000);
-          };
-
-          ws.onerror = (error) => {
-            console.error('WebSocket error:', error);
-            setWsStatus('error');
-          };
+        ws.onopen = () => {
+          setWsStatus('connected');
+          console.log('WebSocket connected');
         };
 
-        connect();
+        ws.onclose = (event) => {
+          console.log('WebSocket closed:', event.code, event.reason);
+          setWsStatus('disconnected');
+          const timeoutId = setTimeout(connectWebSocket, 5000);
+          return () => clearTimeout(timeoutId);
+        };
+
+        ws.onerror = (error) => {
+          console.error('WebSocket error details:', {
+            error,
+            readyState: ws.readyState,
+            url: wsUrl
+          });
+          setWsStatus('error');
+        };
+
+        ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            if (data.type === 'playerCount') {
+              setPlayerCount(data.count);
+            }
+          } catch (err) {
+            console.error('Error parsing WebSocket message:', err);
+          }
+        };
       } catch (err) {
         console.error('WebSocket connection error:', err);
         setWsStatus('error');
-        setTimeout(connectWebSocket, 5000);
+        const timeoutId = setTimeout(connectWebSocket, 5000);
+        return () => clearTimeout(timeoutId);
       }
     };
 
@@ -61,6 +74,7 @@ export default function Landing() {
     return () => {
       if (wsRef.current) {
         wsRef.current.close();
+        wsRef.current = null;
       }
     };
   }, []);
@@ -196,7 +210,7 @@ export default function Landing() {
                 <span className="bg-gradient-to-r from-primary via-primary-light to-secondary text-transparent bg-clip-text">
                   TicTacToe
                 </span>
-              </h1>
+              </h1> 
               <p className="text-lg sm:text-xl text-white/80 max-w-[700px] mx-auto">
                 A developer-friendly game that runs in your terminal. Take a break from coding without leaving your development environment.
               </p>
