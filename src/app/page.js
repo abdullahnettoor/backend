@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Github, Terminal, Download, ChevronRight } from "lucide-react"
+import { Github, Terminal, Download, ChevronRight, Bot, Keyboard, Users, UserPlus2, Brain, Globe } from "lucide-react"
 import Link from "next/link"
 
 export default function Landing() {
@@ -155,8 +155,8 @@ export default function Landing() {
 
   useEffect(() => {
     const handleMouseMove = (e) => {
-      const x = (e.clientX / window.innerWidth) * 100;
-      const y = (e.clientY / window.innerHeight) * 100;
+      const x = 100 - ((e.clientX / window.innerWidth) * 100);
+      const y = 100 - ((e.clientY / window.innerHeight) * 100);
       setMousePosition({ x, y });
     };
 
@@ -180,8 +180,10 @@ export default function Landing() {
       <header className="fixed top-0 left-0 right-0 z-20 bg-[#0f0f0f]/80 backdrop-blur-sm border-b border-white/10">
         <div className="max-w-7xl mx-auto flex items-center justify-between p-4">
           <div className="flex items-center gap-2">
-            <Terminal className="w-6 h-6 text-purple-500" />
-            <span className="font-mono font-bold text-purple-500">TicTacToe CLI</span>
+            <Terminal className="w-6 h-6 text-primary" />
+            <span className="font-mono font-bold bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
+              TicTacToe CLI
+            </span>
           </div>
           {playerCount > 0 && (
             <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 text-sm">
@@ -205,12 +207,17 @@ export default function Landing() {
         <div className="min-h-[calc(100vh-73px)] flex items-center">
           <div className="max-w-4xl mx-auto text-center space-y-12 py-24 px-4">
             <div className="space-y-6">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter">
-                <span className="text-white/90">Terminal</span>{" "}
-                <span className="bg-gradient-to-r from-primary via-primary-light to-secondary text-transparent bg-clip-text">
-                  TicTacToe
-                </span>
-              </h1> 
+              <h1 className="space-y-4 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter">
+                <div className="flex items-center justify-center gap-4">
+                  <span className="font-mono text-primary/80 text-2xl sm:text-3xl md:text-4xl">$</span>
+                  <span className="font-mono text-white/60 text-2xl sm:text-3xl md:text-4xl">./play</span>
+                </div>
+                <div>
+                  <span className="bg-gradient-to-r from-primary via-primary-light to-secondary text-transparent bg-clip-text text-5xl sm:text-6xl md:text-7xl lg:text-8xl">
+                    TicTacToe
+                  </span>
+                </div>
+              </h1>
               <p className="text-lg sm:text-xl text-white/80 max-w-[700px] mx-auto">
                 A developer-friendly game that runs in your terminal. Take a break from coding without leaving your development environment.
               </p>
@@ -223,11 +230,11 @@ export default function Landing() {
 
               <Link
                 href="https://github.com/abdullahnettoor/tictactoe/releases"
-                className="group w-full sm:w-auto inline-flex h-12 items-center justify-center rounded-full bg-gradient-to-r from-primary to-secondary px-8 text-sm font-medium text-white hover:from-primary-dark hover:to-secondary-dark transition-all duration-300 ease-in-out"
+                className="group relative w-full sm:w-auto inline-flex h-12 items-center justify-center rounded-full bg-gradient-to-r from-primary to-secondary px-8 text-sm font-medium shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out overflow-hidden"
               >
-                <Download className="w-5 h-5 mr-2" />
-                Download v1.0.0
-                <ChevronRight className="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" />
+                <Download className="w-5 h-5 mr-2 text-black/70 group-hover:text-black transition-transform duration-300 group-hover:scale-110" />
+                <span className="font-semibold text-black/70 group-hover:text-black relative z-10">Download v1.0.0</span>
+                <ChevronRight className="w-5 h-5 ml-2 text-black/70 group-hover:text-black transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
             </div>
           </div>
@@ -239,13 +246,31 @@ export default function Landing() {
             </h2>
             <ul className="grid sm:grid-cols-2 gap-8">
               {[
-                { icon: '🎯', title: 'Terminal-based', description: 'Play directly in your command line interface' },
-                { icon: '🤖', title: 'AI Opponent', description: 'Challenge our unbeatable artificial intelligence' },
-                { icon: '⌨️', title: 'Vim-style Navigation', description: 'Use familiar keybindings for seamless gameplay' },
-                { icon: '👥', title: 'Multiple Game Modes', description: 'Enjoy local multiplayer or online battles' },
+                {
+                  icon: <Terminal className="w-12 h-12 text-primary" />,
+                  title: 'Terminal-based',
+                  description: 'Play directly in your command line interface'
+                },
+                {
+                  icon: <Bot className="w-12 h-12 text-primary" />,
+                  title: 'AI Opponent',
+                  description: 'Challenge our unbeatable artificial intelligence'
+                },
+                {
+                  icon: <Keyboard className="w-12 h-12 text-primary" />,
+                  title: 'Vim-style Navigation',
+                  description: 'Use familiar keybindings for seamless gameplay'
+                },
+                {
+                  icon: <Users className="w-12 h-12 text-primary" />,
+                  title: 'Multiple Game Modes',
+                  description: 'Enjoy local multiplayer or online battles'
+                },
               ].map((feature, index) => (
                 <li key={index} className="flex flex-col items-center text-center p-6 bg-terminal-default rounded-xl shadow-lg border border-secondary/20 hover:border-secondary/40 transition-all duration-300">
-                  <span className="text-4xl mb-4">{feature.icon}</span>
+                  <div className="mb-4 transform transition-transform duration-300 hover:scale-110">
+                    {feature.icon}
+                  </div>
                   <h3 className="text-xl font-semibold mb-2 text-primary">{feature.title}</h3>
                   <p className="text-white/70">{feature.description}</p>
                 </li>
@@ -267,12 +292,26 @@ export default function Landing() {
                 <h3 className="text-2xl text-primary font-semibold">2. Select Game Mode</h3>
                 <div className="grid sm:grid-cols-3 gap-6">
                   {[
-                    { icon: '👥', title: 'Local Multiplayer', description: 'Challenge a friend on the same computer' },
-                    { icon: '🤖', title: 'VS Computer', description: 'Test your skills against an unbeatable AI' },
-                    { icon: '🌐', title: 'Online Mode', description: 'Play against other players online' },
+                    {
+                      icon: <UserPlus2 className="w-10 h-10 text-primary" />,
+                      title: 'Local Multiplayer',
+                      description: 'Challenge a friend on the same computer'
+                    },
+                    {
+                      icon: <Brain className="w-10 h-10 text-primary" />,
+                      title: 'VS Computer',
+                      description: 'Test your skills against an unbeatable AI'
+                    },
+                    {
+                      icon: <Globe className="w-10 h-10 text-primary" />,
+                      title: 'Online Mode',
+                      description: 'Play against other players online'
+                    },
                   ].map((mode, index) => (
                     <div key={index} className="flex flex-col items-center text-center p-6 bg-terminal-default rounded-xl shadow-lg border border-secondary/20 hover:border-secondary/40 transition-all duration-300">
-                      <span className="text-3xl mb-3">{mode.icon}</span>
+                      <div className="mb-3 transform transition-transform duration-300 hover:scale-110">
+                        {mode.icon}
+                      </div>
                       <h4 className="font-medium text-primary mb-2">{mode.title}</h4>
                       <p className="text-sm text-white/70">{mode.description}</p>
                     </div>
