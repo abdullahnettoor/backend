@@ -1,16 +1,17 @@
 /** @type {import('next').NextConfig} */
-import serverConfig from './server.config.js';
-
 const nextConfig = {
+  output: 'standalone',
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '2mb'
+    }
+  },
   webpack: (config, { isServer }) => {
     if (isServer) {
       config.externals.push('ws');
     }
     return config;
-  },
-  env: {
-    VERCEL_URL: process.env.VERCEL_URL,
   }
-};
+}
 
-export default nextConfig;
+module.exports = nextConfig
