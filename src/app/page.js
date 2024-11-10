@@ -251,26 +251,26 @@ export default function Landing() {
       </header>
       <main className="flex-1 pt-[73px]">
         <div className="min-h-[calc(100vh-73px)] flex items-center">
-          <div className="max-w-4xl mx-auto text-center space-y-12 py-24 px-4">
-            <div className="space-y-6">
-              <h1 className="space-y-4 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter">
-                <div className="flex items-center justify-center gap-4">
+          <div className="max-w-4xl mx-auto text-center space-y-6 sm:space-y-8 py-12 sm:py-24 px-4">
+            <div className="space-y-4 sm:space-y-6">
+              <h1 className="space-y-3 sm:space-y-4 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter">
+                <div className="items-center justify-center gap-4">
                   <span className="font-mono text-primary/80 text-2xl sm:text-3xl md:text-4xl">$</span>
                   <span className="font-mono text-white/60 text-2xl sm:text-3xl md:text-4xl">./play</span>
                 </div>
-                <div className="px-4">
-                  <span className="bg-gradient-to-r from-primary via-primary-light to-secondary text-transparent bg-clip-text text-5xl sm:text-6xl md:text-7xl lg:text-8xl">
+                <div className="px-2">
+                  <span className="bg-gradient-to-r from-primary via-primary-light to-secondary text-transparent bg-clip-text tracking-wider [letter-spacing:0.05em]">
                     TicTacToe
                   </span>
                 </div>
               </h1>
-              <p className="text-lg sm:text-xl text-white/80 max-w-[700px] mx-auto">
+              <p className="text-sm sm:text-base md:text-lg text-white/80 max-w-[600px] mx-auto px-4">
                 A developer-friendly game that runs in your terminal. Take a break from coding without leaving your development environment.
               </p>
             </div>
 
-            <div className="flex flex-col items-center gap-6">
-              <pre className="w-full sm:w-auto font-mono text-sm bg-terminal-default p-4 rounded-lg overflow-x-auto shadow-xl border border-secondary/20">
+            <div className="flex flex-col items-center gap-4 sm:gap-6">
+              <pre className="hidden sm:block w-full sm:w-auto font-mono text-xs sm:text-sm bg-terminal-default p-3 sm:p-4 rounded-lg overflow-x-auto shadow-xl border border-secondary/20">
                 <code className="text-primary">go install github.com/abdullahnettoor/tictactoe@{version}</code>
               </pre>
 
