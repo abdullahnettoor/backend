@@ -1,15 +1,50 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Github, Terminal, Download, ChevronRight, Bot, Keyboard, Users, UserPlus2, Brain, Globe } from "lucide-react"
+import {  Terminal, Download, ChevronRight, Bot, Keyboard, Users, UserPlus2, Brain, Globe} from "lucide-react"
 import Link from "next/link"
+import { FaApple, FaWindows, FaLinux, FaGithub } from 'react-icons/fa';
 
 export default function Landing() {
+  const version = 'v1.0.0';
+
   const [playerCount, setPlayerCount] = useState(0)
   const [wsStatus, setWsStatus] = useState('connecting')
   const wsRef = useRef(null)
   const canvasRef = useRef(null)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [osInfo, setOsInfo] = useState({
+    name: 'Mac',
+    icon: <FaApple className="w-6 h-6" />,
+    url: `https://github.com/abdullahnettoor/tictactoe/releases/download/${version}/tictactoe-darwin-amd64`
+  });
+
+  useEffect(() => {
+    const detectOS = () => {
+      const userAgent = window.navigator.userAgent.toLowerCase();
+      if (userAgent.includes('mac') || userAgent.includes('darwin')) {
+        return {
+          name: 'Mac',
+          icon: <FaApple className="w-6 h-6" />,
+          url: `https://github.com/abdullahnettoor/tictactoe/releases/download/${version}/tictactoe-darwin-amd64`
+        };
+      } else if (userAgent.includes('win')) {
+        return {
+          name: 'Windows',
+          icon: <FaWindows className="w-6 h-6" />,
+          url: `https://github.com/abdullahnettoor/tictactoe/releases/download/${version}/tictactoe-windows-amd64.exe`
+        };
+      }
+      return {
+        name: 'Linux',
+        icon: <FaLinux className="w-6 h-6" />,
+        url: `https://github.com/abdullahnettoor/tictactoe/releases/download/${version}/tictactoe-linux-amd64`
+      };
+    };
+
+    setOsInfo(detectOS());
+  }, [version]);
 
   useEffect(() => {
     const connectWebSocket = () => {
@@ -164,6 +199,17 @@ export default function Landing() {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isDropdownOpen && !event.target.closest('.download-dropdown')) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isDropdownOpen]);
+
   return (
     <div className="min-h-screen bg-[#0f0f0f] text-white overflow-hidden flex flex-col relative z-10">
       <canvas
@@ -198,7 +244,7 @@ export default function Landing() {
             href="https://github.com/abdullahnettoor/tictactoe"
             className="flex items-center gap-2 hover:text-purple-500 transition-colors"
           >
-            <Github className="w-5 h-5" />
+            <FaGithub className="w-5 h-5" />
             <span className="hidden sm:inline">View on GitHub</span>
           </Link>
         </div>
@@ -212,7 +258,7 @@ export default function Landing() {
                   <span className="font-mono text-primary/80 text-2xl sm:text-3xl md:text-4xl">$</span>
                   <span className="font-mono text-white/60 text-2xl sm:text-3xl md:text-4xl">./play</span>
                 </div>
-                <div>
+                <div className="px-4">
                   <span className="bg-gradient-to-r from-primary via-primary-light to-secondary text-transparent bg-clip-text text-5xl sm:text-6xl md:text-7xl lg:text-8xl">
                     TicTacToe
                   </span>
@@ -225,17 +271,49 @@ export default function Landing() {
 
             <div className="flex flex-col items-center gap-6">
               <pre className="w-full sm:w-auto font-mono text-sm bg-terminal-default p-4 rounded-lg overflow-x-auto shadow-xl border border-secondary/20">
-                <code className="text-primary">go install github.com/abdullahnettoor/tictactoe@v1.0.0</code>
+                <code className="text-primary">go install github.com/abdullahnettoor/tictactoe@{version}</code>
               </pre>
 
-              <Link
-                href="https://github.com/abdullahnettoor/tictactoe/releases"
-                className="group relative w-full sm:w-auto inline-flex h-12 items-center justify-center rounded-full bg-gradient-to-r from-primary to-secondary px-8 text-sm font-medium shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out overflow-hidden"
-              >
-                <Download className="w-5 h-5 mr-2 text-black/70 group-hover:text-black transition-transform duration-300 group-hover:scale-110" />
-                <span className="font-semibold text-black/70 group-hover:text-black relative z-10">Download v1.0.0</span>
-                <ChevronRight className="w-5 h-5 ml-2 text-black/70 group-hover:text-black transition-transform duration-300 group-hover:translate-x-1" />
-              </Link>
+              <div className="flex flex-col items-center gap-2">
+                <Link
+                  href={osInfo.url}
+                  className="group inline-flex h-14 items-center justify-center rounded-full bg-gradient-to-r from-primary to-secondary px-8 text-sm font-medium shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out"
+                >
+                  <Download className="w-6 h-6 mr-3 text-black/70 group-hover:text-black transition-transform duration-300 group-hover:scale-110" />
+                  <span className="font-bold text-lg text-black/70 group-hover:text-black flex items-center">
+                    Download for {osInfo.name} <span className="mx-1 pb-1">{osInfo.icon}</span>
+                  </span>
+                </Link>
+
+                <div className="relative">
+                  <button
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="text-sm text-white/60 hover:text-white transition-colors"
+                  >
+                    Download for other platforms
+                  </button>
+
+                  {isDropdownOpen && (
+                    <div className="absolute left-1/2 -translate-x-1/2 mt-2 whitespace-nowrap bg-terminal-default rounded-lg shadow-xl border border-secondary/20 z-50">
+                      {[
+                        { os: 'Windows', icon: <FaWindows className="w-4 h-4" />, url: `https://github.com/abdullahnettoor/tictactoe/releases/download/${version}/tictactoe-windows-amd64.exe` },
+                        { os: 'Mac', icon: <FaApple className="w-4 h-4" />, url: `https://github.com/abdullahnettoor/tictactoe/releases/download/${version}/tictactoe-darwin-amd64` },
+                        { os: 'Linux', icon: <FaLinux className="w-4 h-4" />, url: `https://github.com/abdullahnettoor/tictactoe/releases/download/${version}/tictactoe-linux-amd64` }
+                      ].filter(option => option.os !== osInfo.name).map((option) => (
+                        <Link
+                          key={option.os}
+                          href={option.url}
+                          className="flex items-center px-4 py-2 text-sm text-white/80 hover:text-white hover:bg-white/5 transition-colors"
+                          onClick={() => setIsDropdownOpen(false)}
+                        >
+                          <Download className="w-4 h-4 mr-2" />
+                          Download for <span className="mx-2">{option.icon}</span> {option.os}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -283,13 +361,7 @@ export default function Landing() {
             </h2>
             <div className="space-y-8 text-white/80">
               <div className="space-y-4">
-                <h3 className="text-2xl text-primary font-semibold">1. Installation</h3>
-                <pre className="w-full sm:w-auto font-mono text-sm bg-terminal-default p-4 rounded-lg overflow-x-auto shadow-xl border border-secondary/20">
-                  <code className="text-primary">go install github.com/abdullahnettoor/tictactoe@v1.0.0</code>
-                </pre>
-              </div>
-              <div className="space-y-4">
-                <h3 className="text-2xl text-primary font-semibold">2. Select Game Mode</h3>
+                <h3 className="text-2xl text-primary font-semibold">Select Game Mode</h3>
                 <div className="grid sm:grid-cols-3 gap-6">
                   {[
                     {
@@ -305,10 +377,16 @@ export default function Landing() {
                     {
                       icon: <Globe className="w-10 h-10 text-primary" />,
                       title: 'Online Mode',
-                      description: 'Play against other players online'
+                      description: 'Play against other players online',
+                      comingSoon: true
                     },
                   ].map((mode, index) => (
-                    <div key={index} className="flex flex-col items-center text-center p-6 bg-terminal-default rounded-xl shadow-lg border border-secondary/20 hover:border-secondary/40 transition-all duration-300">
+                    <div key={index} className="relative flex flex-col items-center text-center p-6 bg-terminal-default rounded-xl shadow-lg border border-secondary/20 hover:border-secondary/40 transition-all duration-300">
+                      {mode.comingSoon && (
+                        <span className="absolute -top-3 right-4 px-2 py-1 text-xs font-semibold bg-[#1a1a1a] text-primary rounded-full border border-primary/30">
+                          Coming Soon
+                        </span>
+                      )}
                       <div className="mb-3 transform transition-transform duration-300 hover:scale-110">
                         {mode.icon}
                       </div>
