@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0D0D0D;
+  --foreground: #FFFFFF;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -17,5 +17,121 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+/* For smooth gradient movement */
+* {
+  transition: background-position 0.3s ease;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.rotating-border {
+  position: relative;
+  isolation: isolate;
+}
+
+.rotating-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.8),
+    rgba(255, 255, 255, 0.1)
+  );
+  background-size: 200% auto;
+  border-radius: inherit;
+  animation: borderRotate 3s linear infinite;
+}
+
+.rotating-border::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  background: inherit;
+  border-radius: inherit;
+  z-index: -1;
+}
+
+@keyframes borderRotate {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.title-stroke {
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.1);
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  animation: titleStroke 3s linear infinite;
+}
+
+@keyframes titleStroke {
+  0% {
+    -webkit-text-stroke-color: rgba(255, 255, 255, 0.1);
+  }
+  50% {
+    -webkit-text-stroke-color: rgba(255, 255, 255, 0.8);
+  }
+  100% {
+    -webkit-text-stroke-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.terminal-border {
+  position: relative;
+  isolation: isolate;
+}
+
+.terminal-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  padding: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(78, 205, 196, 0.1),  /* Cool teal */
+    rgba(255, 107, 107, 0.3),  /* Warm coral */
+    rgba(78, 205, 196, 0.1)   /* Cool teal */
+  );
+  background-size: 200% auto;
+  border-radius: inherit;
+  animation: borderFlow 3s linear infinite;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: 1;
+}
+
+.terminal-border::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  background: rgb(0 0 0 / 0.4);
+  backdrop-filter: blur(8px);
+  border-radius: inherit;
+  z-index: -1;
+}
+
+@keyframes borderFlow {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Github, Terminal } from "lucide-react"
+import { Github, Terminal, Download, ChevronRight } from "lucide-react"
 import Link from "next/link"
 
 export default function Landing() {
@@ -9,6 +9,7 @@ export default function Landing() {
   const [wsStatus, setWsStatus] = useState('connecting')
   const wsRef = useRef(null)
   const canvasRef = useRef(null)
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const connectWebSocket = () => {
@@ -138,23 +139,40 @@ export default function Landing() {
     }
   }, [])
 
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      const x = (e.clientX / window.innerWidth) * 100;
+      const y = (e.clientY / window.innerHeight) * 100;
+      setMousePosition({ x, y });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-black text-white overflow-hidden flex flex-col">
+    <div className="min-h-screen bg-[#0f0f0f] text-white overflow-hidden flex flex-col relative z-10">
       <canvas
         ref={canvasRef}
-        className="fixed inset-0 pointer-events-none"
-        style={{ opacity: 0.5 }}
+        className="fixed inset-0 pointer-events-none -z-10"
+        style={{ opacity: 0.4 }}
       />
-      <header className="fixed top-0 left-0 right-0 z-20 bg-black/80 backdrop-blur-sm border-b border-white/10">
+      <div
+        className="fixed inset-0 -z-20 opacity-30"
+        style={{
+          background: `radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%, rgba(139, 92, 246, 0.15), rgba(30, 64, 175, 0.15), transparent 50%)`
+        }}
+      />
+      <header className="fixed top-0 left-0 right-0 z-20 bg-[#0f0f0f]/80 backdrop-blur-sm border-b border-white/10">
         <div className="max-w-7xl mx-auto flex items-center justify-between p-4">
           <div className="flex items-center gap-2">
-            <Terminal className="w-6 h-6" />
-            <span className="font-mono font-bold">TicTacToe CLI</span>
+            <Terminal className="w-6 h-6 text-purple-500" />
+            <span className="font-mono font-bold text-purple-500">TicTacToe CLI</span>
           </div>
           {playerCount > 0 && (
             <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 text-sm">
               <span className="relative flex h-2 w-2">
-                <span className={`absolute inline-flex h-full w-full rounded-full opacity-75 ${wsStatus === 'connected' ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                <span className={`absolute inline-flex h-full w-full rounded-full opacity-75 ${wsStatus === 'connected' ? 'bg-green-500' : 'bg-red-500'} animate-ping`}></span>
                 <span className={`relative inline-flex rounded-full h-2 w-2 ${wsStatus === 'connected' ? 'bg-green-500' : 'bg-red-500'}`}></span>
               </span>
               <span className="font-medium">{playerCount} {playerCount === 1 ? 'Player' : 'Players'} Online</span>
@@ -162,7 +180,7 @@ export default function Landing() {
           )}
           <Link
             href="https://github.com/abdullahnettoor/tictactoe"
-            className="flex items-center gap-2 hover:text-white/80 transition-colors"
+            className="flex items-center gap-2 hover:text-purple-500 transition-colors"
           >
             <Github className="w-5 h-5" />
             <span className="hidden sm:inline">View on GitHub</span>
@@ -171,90 +189,94 @@ export default function Landing() {
       </header>
       <main className="flex-1 pt-[73px]">
         <div className="min-h-[calc(100vh-73px)] flex items-center">
-          <div className="max-w-3xl mx-auto text-center space-y-8 py-24 px-4">
-            <div className="space-y-4">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-white">
-                Terminal TicTacToe
+          <div className="max-w-4xl mx-auto text-center space-y-12 py-24 px-4">
+            <div className="space-y-6">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter">
+                <span className="text-white/90">Terminal</span>{" "}
+                <span className="bg-gradient-to-r from-primary via-primary-light to-secondary text-transparent bg-clip-text">
+                  TicTacToe
+                </span>
               </h1>
-              <p className="text-lg sm:text-xl text-white/60 max-w-[700px] mx-auto">
+              <p className="text-lg sm:text-xl text-white/80 max-w-[700px] mx-auto">
                 A developer-friendly game that runs in your terminal. Take a break from coding without leaving your development environment.
               </p>
             </div>
-            <pre className="font-mono text-sm sm:text-base bg-white/5 p-4 rounded-lg overflow-x-auto">
-              <code>go install github.com/abdullahnettoor/tictactoe@v1.0.0</code>
-            </pre>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+
+            <div className="flex flex-col items-center gap-6">
+              <pre className="w-full sm:w-auto font-mono text-sm bg-terminal-default p-4 rounded-lg overflow-x-auto shadow-xl border border-secondary/20">
+                <code className="text-primary">go install github.com/abdullahnettoor/tictactoe@v1.0.0</code>
+              </pre>
+
               <Link
                 href="https://github.com/abdullahnettoor/tictactoe/releases"
-                className="inline-flex h-10 items-center justify-center rounded-md bg-white px-8 text-sm font-medium text-black hover:bg-white/90 transition-colors"
+                className="group w-full sm:w-auto inline-flex h-12 items-center justify-center rounded-full bg-gradient-to-r from-primary to-secondary px-8 text-sm font-medium text-white hover:from-primary-dark hover:to-secondary-dark transition-all duration-300 ease-in-out"
               >
+                <Download className="w-5 h-5 mr-2" />
                 Download v1.0.0
-              </Link>
-              <Link
-                href="#features"
-                className="inline-flex h-10 items-center justify-center rounded-md px-8 text-sm font-medium border border-white/20 text-white/80 hover:bg-white/10 hover:text-white transition-colors"
-              >
-                Learn More
+                <ChevronRight className="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
             </div>
           </div>
         </div>
-        <section id="features" className="max-w-3xl mx-auto space-y-16 py-24 px-4">
-          <div className="space-y-6">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white">Features</h2>
-            <ul className="grid sm:grid-cols-2 gap-4 text-white/60">
-              <li className="flex items-start gap-2">
-                <span className="text-white/80">🎯</span>
-                Play directly in your terminal
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-white/80">🤖</span>
-                Challenge the unbeatable AI
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-white/80">⌨️</span>
-                Vim-style navigation
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-white/80">👥</span>
-                Multiple game modes
-              </li>
+        <section id="features" className="max-w-4xl mx-auto space-y-24 py-24 px-4">
+          <div className="space-y-12">
+            <h2 className="text-3xl sm:text-4xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
+              Features
+            </h2>
+            <ul className="grid sm:grid-cols-2 gap-8">
+              {[
+                { icon: '🎯', title: 'Terminal-based', description: 'Play directly in your command line interface' },
+                { icon: '🤖', title: 'AI Opponent', description: 'Challenge our unbeatable artificial intelligence' },
+                { icon: '⌨️', title: 'Vim-style Navigation', description: 'Use familiar keybindings for seamless gameplay' },
+                { icon: '👥', title: 'Multiple Game Modes', description: 'Enjoy local multiplayer or online battles' },
+              ].map((feature, index) => (
+                <li key={index} className="flex flex-col items-center text-center p-6 bg-terminal-default rounded-xl shadow-lg border border-secondary/20 hover:border-secondary/40 transition-all duration-300">
+                  <span className="text-4xl mb-4">{feature.icon}</span>
+                  <h3 className="text-xl font-semibold mb-2 text-primary">{feature.title}</h3>
+                  <p className="text-white/70">{feature.description}</p>
+                </li>
+              ))}
             </ul>
           </div>
-          <div className="space-y-6">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white">How to Play</h2>
-            <div className="space-y-8 text-white/60">
-              <div className="space-y-3">
-                <h3 className="text-xl text-white/80 font-semibold">1. Installation</h3>
-                <pre className="font-mono text-sm bg-white/5 p-4 rounded-lg">
-                  <code>go install github.com/abdullahnettoor/tictactoe@v1.0.0</code>
+          <div className="space-y-12">
+            <h2 className="text-3xl sm:text-4xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
+              How to Play
+            </h2>
+            <div className="space-y-8 text-white/80">
+              <div className="space-y-4">
+                <h3 className="text-2xl text-primary font-semibold">1. Installation</h3>
+                <pre className="w-full sm:w-auto font-mono text-sm bg-terminal-default p-4 rounded-lg overflow-x-auto shadow-xl border border-secondary/20">
+                  <code className="text-primary">go install github.com/abdullahnettoor/tictactoe@v1.0.0</code>
                 </pre>
               </div>
-              <div className="space-y-3">
-                <h3 className="text-xl text-white/80 font-semibold">2. Select Game Mode</h3>
-                <div className="grid sm:grid-cols-3 gap-4">
-                  <div className="bg-white/5 p-4 rounded-lg">
-                    <h4 className="font-medium text-white mb-2">👥 Local Multiplayer</h4>
-                    <p className="text-sm">Challenge a friend on the same computer</p>
-                  </div>
-                  <div className="bg-white/5 p-4 rounded-lg">
-                    <h4 className="font-medium text-white mb-2">🤖 VS Computer</h4>
-                    <p className="text-sm">Test your skills against an unbeatable AI</p>
-                  </div>
-                  <div className="bg-white/5 p-4 rounded-lg">
-                    <h4 className="font-medium text-white mb-2">🌐 Online Mode</h4>
-                    <p className="text-sm">Play against other players online</p>
-                  </div>
+              <div className="space-y-4">
+                <h3 className="text-2xl text-primary font-semibold">2. Select Game Mode</h3>
+                <div className="grid sm:grid-cols-3 gap-6">
+                  {[
+                    { icon: '👥', title: 'Local Multiplayer', description: 'Challenge a friend on the same computer' },
+                    { icon: '🤖', title: 'VS Computer', description: 'Test your skills against an unbeatable AI' },
+                    { icon: '🌐', title: 'Online Mode', description: 'Play against other players online' },
+                  ].map((mode, index) => (
+                    <div key={index} className="flex flex-col items-center text-center p-6 bg-terminal-default rounded-xl shadow-lg border border-secondary/20 hover:border-secondary/40 transition-all duration-300">
+                      <span className="text-3xl mb-3">{mode.icon}</span>
+                      <h4 className="font-medium text-primary mb-2">{mode.title}</h4>
+                      <p className="text-sm text-white/70">{mode.description}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
         </section>
       </main>
-      <footer className="text-center text-white/60 py-4">
-        <p className="text-sm">Made with ❤️ by <a href="https://github.com/abdullahnettoor" className="text-white/80 hover:text-white transition-colors">Abdullah Nettoor</a></p>
+      <footer className="text-center text-white/60 py-8 border-t border-white/10">
+        <p className="text-sm">
+          Made with ❤️ by{' '}
+          <a href="https://github.com/abdullahnettoor" className="text-secondary hover:text-secondary-light transition-colors">
+            Abdullah Nettoor
+          </a>
+        </p>
       </footer>
     </div>
   )
 }
-
